@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper为映射的根节点-->
+<!-- mapper为映射的根节点，namespace指定Dao接口的完整类名
+mybatis会依据这个接口动态创建一个实现类去实现这个接口，
+而这个实现类是一个Mapper对象-->
+<mapper namespace="com.bjpowernode.mapper.BookMapper">
+    <!--id ="接口中的方法名"
+　　parameterType="传入的参数类型"
+　　resultType = "返回实体类对象，使用包.类名"-->
+    <!--   resultType还是指定要封装的结果集的类型，不是指定List类型，是指定List集合中元素的类型 -->
+
+<!--
+ private Integer bookId;
+    private String bookName;
+    private String bookIsbn;
+    private String bookPress;
+    private String bookAuthor;
+    private Integer bookPagination;
+    private Double bookPrice;
+    private String bookUploadtime;
+    private String bookStatus;
+    private String bookBorrower;
+    private String bookBorrowtime;
+    private String bookReturntime;
+
+-->
+
+    <resultMap id="selectAll" type="book">
+            <id property="bookId" column="book_id"/>
+            <result property="bookName" column="book_name"/>
+            <result property="bookIsbn" column="book_isbn"/>
+            <result property="bookPress" column="book_press"/>
+            <result property="bookAuthor" column="book_author"/>
+            <result property="bookPagination" column="book_pagination"/>
+            <result property="bookPrice" column="book_price"/>
+            <result property="bookUploadtime" column="book_uploadtime"/>
+            <result property="bookStatus" column="book_status"/>
+            <result property="bookBorrower" column="book_borrower"/>
+            <result property="bookBorrowtime" column="book_borrowtime"/>
+            <result property="bookReturntime" column="book_returntime"/>
+    </resultMap>
+
+    <sql id="allColumns">
+        book_id,book_name,book_isbn,book_press,book_author,book_pagination,book_price,book_uploadtime,book_status,book_borrower,book_borrowtime,book_returntime
+    </sql>
+
+    <select id="selectNewBook" resultMap="selectAll" parameterType="book">
+            select <include refid="allColumns"></include>
+                from book
+                <where>
+                    <if test="bookStatus!=null and bookStatus !='' ">
+                        book_status != '3'
+                    </if>
+                </where>
+                order by book_uploadtime desc
+    </select>
+
+
+    <select id="findById" resultMap="selectAll" parameterType="integer">
+        select <include refid="allColumns"></include>
+            from book where book_id=#{value}
+    </select>
+
+    <update id="editBook">
+        update book
+            <trim prefix="set" suffixOverrides=",">
+                <if test="bookId !=null">
+                    book_id=#{bookId},
+                </if>
+                <if test="bookName !=null">
+                    book_name=#{bookName},
+                </if>
+                <if test="bookIsbn!=null">
+                    book_isbn=#{bookIsbn},
+                </if>
+                <if test="bookPress!=null">
+                    book_press =#{bookPress},
+                </if>
+                <if test="bookAuthor!=null">
+                    book_author=#{bookAuthor},
+                </if>
+                <if test="bookPagination!=null">
+                    book_pagination=#{bookPagination},
+                </if>
+                <if test="bookPrice!=null">
+                    book_price =#{bookPrice},
+                </if>
+                <if test="bookUploadtime!=null">
+                    book_uploadtime=#{bookUploadtime},
+                </if>
+                <if test="bookStatus!=null">
+                    book_status=#{bookStatus},
+                </if>
+                <if test="bookBorrower!=null">
+                    book_borrower=#{bookBorrower},
+                </if>
+                <if test="bookBorrowtime!=null">
+                    book_borrowtime=#{bookBorrowtime},
+                </if>
+                <if test="bookReturntime!=null">
+                    book_returntime=#{bookReturntime},
+                </if>
+            </trim>
+            where
+         book_id =#{bookId}
+    </update>
+
+
+    <select id="searchBooks" resultMap="selectAll" parameterType="book">
+        select <include refid="allColumns"></include>
+            from book
+                <where>
+                        book_status != '3'
+                    <if test="bookName !=null and bookName !='' ">
+                        and book_name like concat('%',#{bookName},'%')
+                    </if>
+                    <if test="bookPress!= null and bookPress !=''">
+                        and book_press like concat('%',#{bookPress},'%')
+                    </if>
+                    <if test="bookAuthor !=null and bookAuthor!='' ">
+                        and book_author like concat('%',#{bookAuthor},'%')
+                    </if>
+                </where>
+                order by book_status
+    </select>
+
+    <insert id="addBook" parameterType="book">
+        insert into book(book_name,book_isbn,book_press,book_author,book_pagination,book_price,book_uploadtime,book_status)
+        values(#{bookName},#{bookIsbn},#{bookPress},#{bookAuthor},#{bookPagination},#{bookPrice},#{bookUploadtime},#{bookStatus})
+    </insert>
+
+    <update id="editBook1" parameterType="book">
+        update book
+        <trim prefix="set" suffixOverrides=",">
+            <if test="bookId !=null">
+                book_id=#{bookId},
+            </if>
+            <if test="bookName !=null">
+                book_name=#{bookName},
+            </if>
+            <if test="bookIsbn!=null">
+                book_isbn=#{bookIsbn},
+            </if>
+            <if test="bookPress!=null">
+                book_press =#{bookPress},
+            </if>
+            <if test="bookAuthor!=null">
+                book_author=#{bookAuthor},
+            </if>
+            <if test="bookPagination!=null">
+                book_pagination=#{bookPagination},
+            </if>
+            <if test="bookPrice!=null">
+                book_price =#{bookPrice},
+            </if>
+            <if test="bookUploadtime!=null">
+                book_uploadtime=#{bookUploadtime},
+            </if>
+            <if test="bookStatus!=null">
+                book_status=#{bookStatus},
+            </if>
+            <if test="bookBorrower!=null">
+                book_borrower=#{bookBorrower},
+            </if>
+            <if test="bookBorrowtime!=null">
+                book_borrowtime=#{bookBorrowtime},
+            </if>
+            <if test="bookReturntime!=null">
+                book_returntime=#{bookReturntime},
+            </if>
+        </trim>
+        where
+        book_id =#{bookId}
+    </update>
+
+    <select id="selectBorrowed" resultMap="selectAll" parameterType="book">
+        select <include refid="allColumns"></include>
+            from book
+            <where>
+                 book_borrower=#{bookBorrower}
+                <if test="bookStatus !=null and bookStatus !=''">
+                    and book_status= '1'
+                </if>
+                <if test="bookName =null and bookName = ''">
+                   and book_name like concat('%',#{bookName},'%')
+                </if>
+                <if test="bookPress = null and bookPress = ''">
+                    and book_press like concat('%',#{bookPress},'%')
+                </if>
+                <if test="bookAuthor = null and bookAuthor = ''">
+                    and book_author like concat('%',#{bookAuthor},'%')
+                </if>
+                    or book_status='2'
+                <if test="bookName =null and bookName = ''">
+                    and  book_name like concat('%',#{bookName},'%')
+                </if>
+                <if test="bookPress = null and bookPress = ''">
+                    and book_press like concat('%',#{bookPress},'%')
+                </if>
+                <if test="bookAuthor = null and bookAuthor = ''">
+                    and book_author like concat('%',#{bookAuthor},'%')
+                </if>
+            </where>
+            order by book_borrowtime
+    </select>
+
+    <select id="selectMyBorrowed" resultMap="selectAll">
+            select <include refid="allColumns"></include>
+                from book
+                    <where>
+                        book_borrower=#{bookBorrower} and book_status in('1','2')
+                        <if test="bookName=null and bookName = ''">
+                            and book_name like concat('%',#{bookName},'%')
+                        </if>
+                        <if test="bookPress=null and bookPress=null">
+                            and book_press like concat('%',#{bookPress},'%')
+                        </if>
+                        <if test="bookAuthor=null and bookAuthor=null">
+                            and book_author like concat('%',#{bookAuthor},'%')
+                        </if>
+                    </where>
+                    order by book_borrowtime
+
+    </select>
+
+</mapper>

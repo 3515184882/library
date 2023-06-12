@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper为映射的根节点-->
+<!-- mapper为映射的根节点，namespace指定Dao接口的完整类名
+mybatis会依据这个接口动态创建一个实现类去实现这个接口，
+而这个实现类是一个Mapper对象-->
+<mapper namespace="com.bjpowernode.mapper.UserMapper">
+    <!--id ="接口中的方法名"
+　　parameterType="传入的参数类型"
+　　resultType = "返回实体类对象，使用包.类名"-->
+    <!--   resultType还是指定要封装的结果集的类型，不是指定List类型，是指定List集合中元素的类型 -->
+
+    <resultMap id="selectAll" type="userManaging">
+        <id property="uId" column="u_id"/>
+        <result property="uName" column="u_name"/>
+        <result property="uEmail" column="u_email"/>
+        <result property="uHiredate" column="u_hiredate"/>
+        <result property="uPassword" column="u_password"/>
+        <result property="uStatus" column="u_status"/>
+    </resultMap>
+
+    <sql id="allColumns">
+        u_id,u_name,u_email,u_hiredate,u_status
+    </sql>
+
+
+    <select id="selectUser" resultMap="selectAll">
+        select <include refid="allColumns"></include>
+            from
+                usermanaging
+                <where>
+                    <if test="uId!=null and uId!=''">
+                       and u_id=#{uId}
+                    </if>
+                    <if test="uName !=null and uName!=''">
+                       and u_name=#{uName}
+                    </if>
+                    <if test="uEmail !=null and uEmail!=''">
+                      and  u_email=#{uEmail}
+                    </if>
+                    <if test="uHiredate!=null and uHiredate!=''">
+                       and u_hiredate=#{uHiredate}
+                    </if>
+                    <if test="uStatus!=null and uStatus!=''">
+                       and u_status=#{uStatus}
+                    </if>
+                </where>
+                order by u_status desc
+    </select>
+
+    <insert id="addUser" parameterType="userManaging">
+        insert into usermanaging(u_name,u_email,u_hiredate,u_password,u_role,u_status)
+        values (#{uName},#{uEmail},#{uHiredate},#{uPassword},#{uRole},#{uStatus})
+    </insert>
+
+    <update id="editUser" parameterType="userManaging">
+            update usermanaging
+            <trim prefix="set" suffixOverrides=",">
+                <if test="uId !=null">
+                    u_id=#{uId},
+                </if>
+                <if test="uName !=null">
+                    u_name=#{uName},
+                </if>
+                <if test="uEmail!=null">
+                    u_email=#{uEmail},
+                </if>
+                <if test="uHiredate!=null">
+                    u_hiredate =#{uHiredate},
+                </if>
+                <if test="uPassword!=null">
+                    u_password=#{uPassword},
+                </if>
+                <if test="uRole!=null">
+                    u_role=#{uRole},
+                </if>
+                <if test="uStatus!=null">
+                    u_status =#{uStatus},
+                </if>
+            </trim>
+            where
+        u_id =#{uId}
+        </update>
+
+    <select id="findById" parameterType="userManaging" resultMap="selectAll">
+        select <include refid="allColumns"></include>
+        from usermanaging where u_id=#{uId}
+    </select>
+
+    <update id="leave" parameterType="userManaging">
+        update usermanaging set  u_status=1 where u_id=#{uId}
+    </update>
+</mapper>

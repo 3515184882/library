@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper为映射的根节点-->
+<!-- mapper为映射的根节点，namespace指定Dao接口的完整类名
+mybatis会依据这个接口动态创建一个实现类去实现这个接口，
+而这个实现类是一个Mapper对象-->
+<mapper namespace="com.bjpowernode.mapper.RecordMapper">
+    <!--id ="接口中的方法名"
+　　parameterType="传入的参数类型"
+　　resultType = "返回实体类对象，使用包.类名"-->
+    <!--   resultType还是指定要封装的结果集的类型，不是指定List类型，是指定List集合中元素的类型 -->
+
+    <resultMap id="all" type="record">
+        <id  property="recordId" column="record_id"/>
+        <result property="recordBookname" column="record_bookname"/>
+        <result property="recordBookisbn" column="record_bookisbn"/>
+        <result property="recordBorrower" column="record_borrower"/>
+        <result property="recordBorrowtime" column="record_borrowtime"/>
+        <result property="recordRemandtime" column="record_remandtime"/>
+    </resultMap>
+
+    <sql id="allColumns">
+        record_id,record_bookname,record_bookisbn,record_borrower,record_borrowtime,record_remandtime
+    </sql>
+
+    <insert id="addRecord">
+        insert into record(record_id,record_bookname,record_bookisbn,record_borrower,record_borrowtime,record_remandtime)
+        values (#{recordId},#{recordBookname},#{recordBookisbn},#{recordBorrower},#{recordBorrowtime},#{recordRemandtime})
+    </insert>
+
+    <select id="searchRecords" resultMap="all">
+            select <include refid="allColumns"></include>
+                from record
+                where 1=1
+                <if test="recordBorrower!=null and recordBorrower!=''">
+                    and record_borrower like concat('%',#{recordBorrower},'%')
+                </if>
+                <if test="recordBookname!=null and recordBookname!=''">
+                    and record_bookname like concat('%',#{recordBookname},'%')
+                </if>
+                order by record_remandtime desc
+    </select>
+</mapper>
